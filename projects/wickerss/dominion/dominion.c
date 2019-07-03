@@ -40,7 +40,7 @@ int initializeGame(int numPlayers, int kingdomCards[10], int randomSeed,
   int i;
   int j;
   int it;			
-  //set up random number generator
+  //set up random numbers generator
   SelectStream(1);
   PutSeed((long)randomSeed);
   
