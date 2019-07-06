@@ -18,11 +18,11 @@ struct gameState* newGame() {
   return g;
 }
 
-int callBaron(int card, int choice1, int choice2, int choice3, struct gameState *state, int handPos, int *bonus) ;
-int callMinion(int card, int choice1, int choice2, int choice3, struct gameState *state, int handPos, int *bonus);
-int callAmbassador(int card, int choice1, int choice2, int choice3, struct gameState *state, int handPos, int *bonus);
-int callTribute(int card, int choice1, int choice2, int choice3, struct gameState *state, int handPos, int *bonus);
-int callMine(int card, int choice1, int choice2, int choice3, struct gameState *state, int handPos, int *bonus);
+int callBaron(int choice1, struct gameState *state) ;
+int callMinion(int choice1, int choice2, struct gameState *state, int handPos);
+int callAmbassador(int choice1, int choice2, struct gameState *state, int handPos);
+int callTribute(struct gameState *state);
+int callMine(int choice1, int choice2, struct gameState *state, int handPos);
 
 
 
@@ -779,7 +779,7 @@ int cardEffect(int card, int choice1, int choice2, int choice3, struct gameState
     case mine:
 
 
-        callMine(card, choice1, choice2, choice3, state, handPos, bonus);
+        callMine(choice1, choice2, state, handPos);
             return 0;
 
 
@@ -833,7 +833,7 @@ int cardEffect(int card, int choice1, int choice2, int choice3, struct gameState
       return 0;
 		
     case baron:
-        callBaron(card, choice1, choice2, choice3, state, handPos, bonus);
+        callBaron(choice1, state);
       return 0;
 		
     case great_hall:
@@ -849,7 +849,7 @@ int cardEffect(int card, int choice1, int choice2, int choice3, struct gameState
 		
     case minion:
 
-        callMinion(card, choice1, choice2, choice3, state, handPos, bonus);
+        callMinion(choice1, choice2, state, handPos);
 
       return 0;
 		
@@ -878,14 +878,14 @@ int cardEffect(int card, int choice1, int choice2, int choice3, struct gameState
 		
     case tribute:
 
-        callTribute(card, choice1, choice2, choice3, state, handPos, bonus);
+        callTribute(state);
             return 0;
 
 
 
 		
     case ambassador:
-        callAmbassador(card, choice1, choice2, choice3, state, handPos, bonus);
+        callAmbassador(choice1, choice2, state, handPos);
             return 0;
 		
     case cutpurse:
@@ -1117,7 +1117,7 @@ int updateCoins(int player, struct gameState *state, int bonus)
 
 
 // Call functions extracted from switch case
-int callBaron(int card, int choice1, int choice2, int choice3, struct gameState *state, int handPos, int *bonus) {
+int callBaron(int choice1,struct gameState *state) {
 
     int currentPlayer = whoseTurn(state);
     int nextPlayer = currentPlayer + 1;
@@ -1179,7 +1179,7 @@ int callBaron(int card, int choice1, int choice2, int choice3, struct gameState 
     return 0;
 
 }
-int callMinion(int card, int choice1, int choice2, int choice3, struct gameState *state, int handPos, int *bonus){
+int callMinion(int choice1, int choice2, struct gameState *state, int handPos){
 //+1 action
 state->numActions++;
 
@@ -1243,7 +1243,7 @@ drawCard(i, state);
     return 0;
 }
 
-int callAmbassador(int card, int choice1, int choice2, int choice3, struct gameState *state, int handPos, int *bonus){
+int callAmbassador( int choice1, int choice2, struct gameState *state, int handPos){
     int i;
     int j;
 
@@ -1312,7 +1312,7 @@ int callAmbassador(int card, int choice1, int choice2, int choice3, struct gameS
     return 0;
 
 }
-int callTribute(int card, int choice1, int choice2, int choice3, struct gameState *state, int handPos, int *bonus){
+int callTribute(struct gameState *state){
     int i;
 
     int currentPlayer = whoseTurn(state);
@@ -1387,7 +1387,7 @@ int callTribute(int card, int choice1, int choice2, int choice3, struct gameStat
 
 
     return 0;}
-int callMine(int card, int choice1, int choice2, int choice3, struct gameState *state, int handPos, int *bonus){
+int callMine( int choice1, int choice2,  struct gameState *state, int handPos){
     int i;
     int j;
 
