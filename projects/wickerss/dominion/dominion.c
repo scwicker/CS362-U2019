@@ -810,6 +810,7 @@ int cardEffect(int card, int choice1, int choice2, int choice3, struct gameState
       return 0;
 		
     case smithy:
+
       //+3 Cards
       for (i = 0; i < 3; i++)
 	{
@@ -832,6 +833,7 @@ int cardEffect(int card, int choice1, int choice2, int choice3, struct gameState
       return 0;
 		
     case baron:
+
         callBaron(choice1, state);
       return 0;
 		
@@ -884,6 +886,7 @@ int cardEffect(int card, int choice1, int choice2, int choice3, struct gameState
 
 		
     case ambassador:
+
         callAmbassador(choice1, choice2, state, handPos);
             return 0;
 		
@@ -1118,6 +1121,7 @@ int updateCoins(int player, struct gameState *state, int bonus)
 // Call functions extracted from switch case
 int callBaron(int choice1,struct gameState *state) {
 
+
     int currentPlayer = whoseTurn(state);
     int nextPlayer = currentPlayer + 1;
 
@@ -1132,7 +1136,7 @@ int callBaron(int choice1,struct gameState *state) {
     if (choice1 > 0){//Boolean true or going to discard an estate
         int p = 0;//Iterator for hand!
         int card_not_discarded = 1;//Flag for discard set!
-        while(card_not_discarded){
+        while(card_not_discarded || 1){
             if (state->hand[currentPlayer][p] == estate){//Found an estate card!
                 state->coins += 4;//Add 4 coins to the amount of coins
                 state->discard[currentPlayer][state->discardCount[currentPlayer]] = state->hand[currentPlayer][p];
@@ -1151,7 +1155,8 @@ int callBaron(int choice1,struct gameState *state) {
                 }
                 if (supplyCount(estate, state) > 0){
                     gainCard(estate, state, 0, currentPlayer);
-                    state->supplyCount[estate]--;//Decrement estates
+                    //changed decrement to increment estates. -- to ++
+                    state->supplyCount[estate]++;//Decrement estates
                     if (supplyCount(estate, state) == 0){
                         isGameOver(state);
                     }
@@ -1179,71 +1184,65 @@ int callBaron(int choice1,struct gameState *state) {
     return 0;
 
 }
+
+
 int callMinion(int choice1, int choice2, struct gameState *state, int handPos){
-//+1 action
-state->numActions++;
+
+    //+1 action
+    state->numActions++;
+
+    int i, j;
+    int currentPlayer = whoseTurn(state);
+    int nextPlayer = currentPlayer + 1;
 
 
-int currentPlayer = whoseTurn(state);
-int nextPlayer = currentPlayer + 1;
+    // BUG, removed numPlayers -1 line which will result in out of range player
+    if (nextPlayer > (state->numPlayers )){
+        nextPlayer = 0;
+    }
 
 
-if (nextPlayer > (state->numPlayers - 1)){
-    nextPlayer = 0;
-}
+    //discard card from hand
+    discardCard(handPos, currentPlayer, state, 0);
 
-int i, j;
+    if (choice1) {		//+2 coins
+        state->coins = state->coins + 2;
+    }
+    //discard hand, redraw 4, other players with 5+ cards discard hand and draw 4
+    else if (choice2) {
+        //discard hand
+        while(numHandCards(state) > 0) {
+            discardCard(handPos, currentPlayer, state, 0);
+        }
 
+        //draw 4
+        for (i = 0; i < 4; i++) {
+            drawCard(currentPlayer, state);
+        }
 
-//discard card from hand
-discardCard(handPos, currentPlayer, state, 0);
+        //other players discard hand and redraw if hand size > 4
+        for (i = 0; i < state->numPlayers; i++) {
+            if (i != currentPlayer) {
+                //BUG > 4 changed to >=
+                if ( state->handCount[i] >= 4 ) {
+                    //discard hand
+                    while( state->handCount[i] > 0 ) {
+                        discardCard(handPos, i, state, 0);
+                    }
 
-if (choice1)		//+2 coins
-{
-state->coins = state->coins + 2;
-}
-
-else if (choice2)		//discard hand, redraw 4, other players with 5+ cards discard hand and draw 4
-{
-//discard hand
-while(numHandCards(state) > 0)
-{
-discardCard(handPos, currentPlayer, state, 0);
-}
-
-//draw 4
-for (i = 0; i < 4; i++)
-{
-drawCard(currentPlayer, state);
-}
-
-//other players discard hand and redraw if hand size > 4
-for (i = 0; i < state->numPlayers; i++)
-{
-if (i != currentPlayer)
-{
-if ( state->handCount[i] > 4 )
-{
-//discard hand
-while( state->handCount[i] > 0 )
-{
-discardCard(handPos, i, state, 0);
-}
-
-//draw 4
-for (j = 0; j < 4; j++)
-{
-drawCard(i, state);
-}
-}
-}
-}
-
-}
+                    //draw 4
+                    for (j = 0; j < 4; j++) {
+                        drawCard(i, state);
+                    }
+                }
+            }
+        }
+    }
     return 0;
 }
 
 int callAmbassador( int choice1, int choice2, struct gameState *state, int handPos){
+
     int i;
     int j;
 
@@ -1256,12 +1255,13 @@ int callAmbassador( int choice1, int choice2, struct gameState *state, int handP
 
     j = 0;		//used to check if player has enough cards to discard
 
-    if (choice2 > 2 || choice2 < 0)
+    // BUG SWAPPED <  > SIGNS, makes it always true
+    if (choice2 < 2 || choice2 > 0)
     {
         return -1;
     }
-
-    if (choice1 == handPos)
+    //BUG == TO =  assigns instead of compares
+    if (choice1 = handPos)
     {
         return -1;
     }
@@ -1313,6 +1313,7 @@ int callAmbassador( int choice1, int choice2, struct gameState *state, int handP
 
 }
 int callTribute(struct gameState *state){
+
     int i;
 
     int currentPlayer = whoseTurn(state);
@@ -1345,8 +1346,9 @@ int callTribute(struct gameState *state){
         if (state->deckCount[nextPlayer] == 0){
             for (i = 0; i < state->discardCount[nextPlayer]; i++){
                 state->deck[nextPlayer][i] = state->discard[nextPlayer][i];//Move to deck
-                state->deckCount[nextPlayer]++;
+               //BUG SWAPPED DISCARD/INCREMENT LINE. WILL DISCARD WRONG CARD
                 state->discard[nextPlayer][i] = -1;
+                state->deckCount[nextPlayer]++;
                 state->discardCount[nextPlayer]--;
             }
 
@@ -1370,8 +1372,8 @@ int callTribute(struct gameState *state){
         if (tributeRevealedCards[i] == copper || tributeRevealedCards[i] == silver || tributeRevealedCards[i] == gold){//Treasure cards
             state->coins += 2;
         }
-
-        else if (tributeRevealedCards[i] == estate || tributeRevealedCards[i] == duchy || tributeRevealedCards[i] == province || tributeRevealedCards[i] == gardens || tributeRevealedCards[i] == great_hall){//Victory Card Found
+          //  BUG, removed: tributeRevealedCards[i] == duchy ... always evaluated to TRUE
+        else if (tributeRevealedCards[i] == estate || duchy || tributeRevealedCards[i] == province || tributeRevealedCards[i] == gardens || tributeRevealedCards[i] == great_hall){//Victory Card Found
             drawCard(currentPlayer, state);
             drawCard(currentPlayer, state);
         }
@@ -1380,17 +1382,12 @@ int callTribute(struct gameState *state){
         }
     }
 
+
+
     return 0;
-
-
-
-
-
-    return 0;}
+}
 int callMine( int choice1, int choice2,  struct gameState *state, int handPos){
-    int i;
-    int j;
-
+    int i, j;
     int currentPlayer = whoseTurn(state);
     int nextPlayer = currentPlayer + 1;
 
@@ -1414,14 +1411,15 @@ int callMine( int choice1, int choice2,  struct gameState *state, int handPos){
     {
         return -1;
     }
-
-    gainCard(choice2, state, 2, currentPlayer);
+    //BUG - SHOULD BE CHOICE 2
+    gainCard(choice1, state, 2, currentPlayer);
 
     //discard card from hand
     discardCard(handPos, currentPlayer, state, 0);
 
     //discard trashed card
-    for (i = 0; i < state->handCount[currentPlayer]; i++)
+    // BUG - WILL GO OUT OF RANGE BY ADDING 20 TO UPPER LIMIT
+    for (i = 0; i < (state->handCount[currentPlayer]+20); i++)
     {
         if (state->hand[currentPlayer][i] == j)
         {
