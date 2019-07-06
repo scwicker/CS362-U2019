@@ -18,15 +18,6 @@ struct gameState* newGame() {
   return g;
 }
 
-int callBaron(int choice1, struct gameState *state) ;
-int callMinion(int choice1, int choice2, struct gameState *state, int handPos);
-int callAmbassador(int choice1, int choice2, struct gameState *state, int handPos);
-int callTribute(struct gameState *state);
-int callMine(int choice1, int choice2, struct gameState *state, int handPos);
-
-
-
-
 int* kingdomCards(int k1, int k2, int k3, int k4, int k5, int k6, int k7,
                   int k8, int k9, int k10) {
   int* k = malloc(10 * sizeof(int));
@@ -43,12 +34,26 @@ int* kingdomCards(int k1, int k2, int k3, int k4, int k5, int k6, int k7,
   return k;
 }
 
+int different_kingdom_cards(int *kingdomCards){
+    int i,j;
+
+    for (i = 0; i < 10; i++)
+    {
+        for (j = 0; j < 10; j++)
+        {
+            if (j != i && kingdomCards[j] == kingdomCards[i])
+            {
+                return -1;
+            }
+        }
+    }
+    return 1;
+}
+
 int initializeGame(int numPlayers, int kingdomCards[10], int randomSeed,
 		   struct gameState *state) {
 
-  int i;
-  int j;
-  int it;			
+  int i, j, it;
   //set up random numbers generator
   SelectStream(1);
   PutSeed((long)randomSeed);
@@ -63,16 +68,10 @@ int initializeGame(int numPlayers, int kingdomCards[10], int randomSeed,
   state->numPlayers = numPlayers;
 
   //check selected kingdom cards are different
-  for (i = 0; i < 10; i++)
-    {
-      for (j = 0; j < 10; j++)
-        {
-	  if (j != i && kingdomCards[j] == kingdomCards[i])
-	    {
-	      return -1;
-	    }
-        }
-    }
+  if (!different_kingdom_cards(kingdomCards)){
+
+      return -1;
+  }
 
 
   //initialize supply
@@ -1129,6 +1128,7 @@ int callBaron(int choice1,struct gameState *state) {
 
 
     state->numBuys++;//Increase buys by 1!
+    //could just be if (choice) ?
     if (choice1 > 0){//Boolean true or going to discard an estate
         int p = 0;//Iterator for hand!
         int card_not_discarded = 1;//Flag for discard set!
