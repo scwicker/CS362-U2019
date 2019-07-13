@@ -13,6 +13,7 @@ int compare(const void* a, const void* b) {
   return 0;
 }
 
+//struct with malloc
 struct gameState* newGame() {
   struct gameState* g = malloc(sizeof(struct gameState));
   return g;
