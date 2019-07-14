@@ -40,6 +40,8 @@ int main() {
     }
 
     printf ("TESTING callMine():\n");
+
+
     for (p = 0; p < numPlayer; p++)
     {
         for (handCount = 1; handCount <= maxHandCount; handCount++)
@@ -47,7 +49,6 @@ int main() {
             for (bonus = 0; bonus <= maxBonus; bonus++)
             {
 #if (NOISY_TEST == 1)
-                //printf("Test player %d with %d treasure card(s) and %d bonus.\n", p, handCount, bonus);
 #endif
                 memset(&G, 23, sizeof(struct gameState));   // clear the game state
                 r = initializeGame(numPlayer, k, seed, &G); // initialize a new game
@@ -55,30 +56,81 @@ int main() {
                 memcpy(G.hand[p], coppers, sizeof(int) * handCount); // set all the cards to copper
                 updateCoins(p, &G, bonus);
 #if (NOISY_TEST == 1)
-               // printf("G.coins = %d, expected = %d\n", G.coins, handCount * 1 + bonus);
 #endif
-            //    assert(G.coins == handCount * 1 + bonus); // check if the number of coins is correct
 
-              //  memcpy(G.hand[p], silvers, sizeof(int) * handCount); // set all the cards to silver
-                /* choice1 is hand# of money to trash, choice2 is supply# of
-	    money to put in hand */
-                
-                //should fail because it's less than silver
-                G.hand[1][1] = province;
-                if(callMine( 1, 1, &G, bonus) == -1){
-                    printf("PASS: Caught card outside of silver, copper, gold range.\n");
-                }
-                //should pass
-                G.hand[2][2] = silver;
-                if(callMine( 2, 2, &G, bonus)){
-                    printf("PASS: Card validated inside of range.\n");
-                }
-                
 
             }
         }
     }
 
+    G.whoseTurn = 1;
+    //state->hand[player][count]
+    G.hand[1][1] = province; //8
+    G.hand[1][2] = estate;   //3
+
+
+    if(callMine( 1, 2, &G, bonus) == -1){
+        printf("PASS: Caught card outside of silver, copper, gold range.\n");
+    }
+    else{
+        printf("Failed: callMine should have caught this error \n");
+    }
+
+    //should fail because it's greater than gold
+    G.hand[1][1] = adventurer;
+    G.whoseTurn = 1;
+    if(callMine( 1, 2, &G, bonus) == -1){
+        printf("PASS: Caught card outside of silver, copper, gold range.\n");
+    }else{
+        printf("Failed: callMine\n");
+    }
+
+    //should pass
+    G.hand[1][1] = silver;
+    G.hand[1][2] = province;
+    G.whoseTurn = 1;
+    if(callMine( 1, 2, &G, bonus) == 0){
+        printf("PASS: Card validated inside of range.\n");
+    }
+    else{
+        printf("Failed: callMine\n");
+    }
+
+    //should pass
+    G.hand[1][2] = outpost;
+    G.whoseTurn = 1;
+    if(callMine( 1, 2, &G, bonus) == 0){
+        printf("PASS: Card validated inside of range curse - treasure map.\n");
+    }
+    else{
+        printf("Failed: callMine\n");
+    }
+
+
+
+
+    G.hand[1][1] = copper;
+    G.hand[1][2] = 100;
+    G.whoseTurn = 1;
+    if(callMine( 1, 2, &G, bonus) == -1){
+        printf("PASS: Caught card out of range curse - treasure range.\n");
+    }
+    else{
+        printf("Failed: callMine from curse - treasuremap\n");
+    }
+
+    G.whoseTurn = 1;
+    G.hand[1][1] = silver;
+    G.hand[1][2] = province;
+    G.playedCardCount = 10;
+    callMine(1, 2, &G, bonus);
+    if(G.playedCardCount == 10){
+        printf("PASS: Card was trashed (as expected) instead of added to played cards.\n");
+    }
+    else{
+        printf("Failed: callMine did not Trash card\n");
+    }
+    
     printf("All tests passed!\n");
 
     return 0;

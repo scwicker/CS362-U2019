@@ -148,24 +148,24 @@ int initializeGame(int numPlayers, int kingdomCards[10], int randomSeed,
     {
       state->deckCount[i] = 0;
       for (j = 0; j < 3; j++)
-	{
-	  state->deck[i][j] = estate;
-	  state->deckCount[i]++;
-	}
+            {
+              state->deck[i][j] = estate;
+              state->deckCount[i]++;
+            }
       for (j = 3; j < 10; j++)
-	{
-	  state->deck[i][j] = copper;
-	  state->deckCount[i]++;		
-	}
+            {
+              state->deck[i][j] = copper;
+              state->deckCount[i]++;
+            }
     }
 
   //shuffle player decks
   for (i = 0; i < numPlayers; i++)
     {
       if ( shuffle(i, state) < 0 )
-	{
-	  return -1;
-	}
+        {
+          return -1;
+        }
     }
 
   //draw player hands
@@ -174,11 +174,6 @@ int initializeGame(int numPlayers, int kingdomCards[10], int randomSeed,
       //initialize hand size to zero
       state->handCount[i] = 0;
       state->discardCount[i] = 0;
-      //draw 5 cards
-      // for (j = 0; j < 5; j++)
-      //	{
-      //	  drawCard(i, state);
-      //	}
     }
   
   //set embargo tokens to 0 for all supply piles
@@ -1013,7 +1008,6 @@ int cardEffect(int card, int choice1, int choice2, int choice3, struct gameState
 
 int discardCard(int handPos, int currentPlayer, struct gameState *state, int trashFlag)
 {
-	
   //if card is not trashed, added to Played pile 
   if (trashFlag < 1)
     {
@@ -1021,7 +1015,7 @@ int discardCard(int handPos, int currentPlayer, struct gameState *state, int tra
       state->playedCards[state->playedCardCount] = state->hand[currentPlayer][handPos]; 
       state->playedCardCount++;
     }
-	
+    
   //set played card to -1
   state->hand[currentPlayer][handPos] = -1;
 	
@@ -1387,6 +1381,9 @@ int callTribute(struct gameState *state){
 
     return 0;
 }
+
+/* choice1 is hand# of money to trash, choice2 is supply# of
+	    money to put in hand   handPos is just position of card in player hand (array i guess?)*/
 int callMine( int choice1, int choice2,  struct gameState *state, int handPos){
     int i, j;
     int currentPlayer = whoseTurn(state);
@@ -1395,36 +1392,50 @@ int callMine( int choice1, int choice2,  struct gameState *state, int handPos){
     if (nextPlayer > (state->numPlayers - 1)){
         nextPlayer = 0;
     }
-
     j = state->hand[currentPlayer][choice1];  //store card we will trash
 
+
+
+    //range of copper through gold in ENUM, so return -1 if outside this range
     if (state->hand[currentPlayer][choice1] < copper || state->hand[currentPlayer][choice1] > gold)
     {
         return -1;
     }
+
+
 
     if (choice2 > treasure_map || choice2 < curse)
     {
         return -1;
     }
 
-    if ( (getCost(state->hand[currentPlayer][choice1]) + 3) > getCost(choice2) )
+
+    //this may have been an existing bug because it call get cost with raw choice 2.
+    if ( (getCost(state->hand[currentPlayer][choice1]) + 3) > getCost(state->hand[currentPlayer][choice2]) )
     {
         return -1;
     }
+
+
+
+
+
+
     //BUG - SHOULD BE CHOICE 2
-    gainCard(choice1, state, 2, currentPlayer);
+    //first param is card position to be replaced, 2 is the flag saying add card to deck
+    gainCard(choice2, state, 2, currentPlayer);
 
     //discard card from hand
-    discardCard(handPos, currentPlayer, state, 0);
+    discardCard(handPos, currentPlayer, state, 1);
 
     //discard trashed card
-    // BUG - WILL GO OUT OF RANGE BY ADDING 20 TO UPPER LIMIT
-    for (i = 0; i < (state->handCount[currentPlayer]+20); i++)
+    // BUG - WILL GO OUT OF RANGE BY ADDING 20 TO UPPER LIMIT  ** should be currentplayer + 20 ] bracket after to fail
+    for (i = 0; i < (state->handCount[currentPlayer]); i++)
     {
         if (state->hand[currentPlayer][i] == j)
         {
-            discardCard(i, currentPlayer, state, 0);
+            //BUG changed trash flag to false
+            discardCard(i, currentPlayer, state, 1);
             break;
         }
     }
@@ -1432,4 +1443,5 @@ int callMine( int choice1, int choice2,  struct gameState *state, int handPos){
     return 0;
 }
 //end of dominion.c
+
 
