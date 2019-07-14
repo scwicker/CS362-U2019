@@ -39,7 +39,7 @@ int main() {
         golds[i] = gold;
     }
 
-    printf ("TESTING updateCoins():\n");
+    printf ("TESTING callMine():\n");
     for (p = 0; p < numPlayer; p++)
     {
         for (handCount = 1; handCount <= maxHandCount; handCount++)
@@ -47,7 +47,7 @@ int main() {
             for (bonus = 0; bonus <= maxBonus; bonus++)
             {
 #if (NOISY_TEST == 1)
-                printf("Test player %d with %d treasure card(s) and %d bonus.\n", p, handCount, bonus);
+                //printf("Test player %d with %d treasure card(s) and %d bonus.\n", p, handCount, bonus);
 #endif
                 memset(&G, 23, sizeof(struct gameState));   // clear the game state
                 r = initializeGame(numPlayer, k, seed, &G); // initialize a new game
@@ -55,23 +55,26 @@ int main() {
                 memcpy(G.hand[p], coppers, sizeof(int) * handCount); // set all the cards to copper
                 updateCoins(p, &G, bonus);
 #if (NOISY_TEST == 1)
-                printf("G.coins = %d, expected = %d\n", G.coins, handCount * 1 + bonus);
+               // printf("G.coins = %d, expected = %d\n", G.coins, handCount * 1 + bonus);
 #endif
-                assert(G.coins == handCount * 1 + bonus); // check if the number of coins is correct
+            //    assert(G.coins == handCount * 1 + bonus); // check if the number of coins is correct
 
-                memcpy(G.hand[p], silvers, sizeof(int) * handCount); // set all the cards to silver
-                updateCoins(p, &G, bonus);
-#if (NOISY_TEST == 1)
-                printf("G.coins = %d, expected = %d\n", G.coins, handCount * 2 + bonus);
-#endif
-                assert(G.coins == handCount * 2 + bonus); // check if the number of coins is correct
+              //  memcpy(G.hand[p], silvers, sizeof(int) * handCount); // set all the cards to silver
+                /* choice1 is hand# of money to trash, choice2 is supply# of
+	    money to put in hand */
+                
+                //should fail because it's less than silver
+                G.hand[1][1] = province;
+                if(callMine( 1, 1, &G, bonus) == -1){
+                    printf("PASS: Caught card outside of silver, copper, gold range.\n");
+                }
+                //should pass
+                G.hand[2][2] = silver;
+                if(callMine( 2, 2, &G, bonus)){
+                    printf("PASS: Card validated inside of range.\n");
+                }
+                
 
-                memcpy(G.hand[p], golds, sizeof(int) * handCount); // set all the cards to gold
-                updateCoins(p, &G, bonus);
-#if (NOISY_TEST == 1)
-                printf("G.coins = %d, expected = %d\n", G.coins, handCount * 3 + bonus);
-#endif
-                assert(G.coins == handCount * 3 + bonus); // check if the number of coins is correct
             }
         }
     }
@@ -80,4 +83,6 @@ int main() {
 
     return 0;
 }
+
+
 
