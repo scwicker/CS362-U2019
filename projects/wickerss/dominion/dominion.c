@@ -528,58 +528,59 @@ int getWinners(int players[MAX_PLAYERS], struct gameState *state) {
 
 int drawCard(int player, struct gameState *state)
 {	int count;
-  int deckCounter;
-  if (state->deckCount[player] <= 0){//Deck is empty
+    int deckCounter;
+    if (state->deckCount[player] <= 0){//Deck is empty
+
+        //Step 1 Shuffle the discard pile back into a deck
+        int i;
+        //Move discard to deck
+        for (i = 0; i < state->discardCount[player];i++){
+            state->deck[player][i] = state->discard[player][i];
+            state->discard[player][i] = -1;
+        }
+
+        state->deckCount[player] = state->discardCount[player];
+        state->discardCount[player] = 0;//Reset discard
+
+        //Shufffle the deck
+        shuffle(player, state);//Shuffle the deck up and make it so that we can draw
+
+        if (DEBUG){//Debug statements
+            printf("Deck count now: %d\n", state->deckCount[player]);
+        }
     
-    //Step 1 Shuffle the discard pile back into a deck
-    int i;
-    //Move discard to deck
-    for (i = 0; i < state->discardCount[player];i++){
-      state->deck[player][i] = state->discard[player][i];
-      state->discard[player][i] = -1;
-    }
+        state->discardCount[player] = 0;
 
-    state->deckCount[player] = state->discardCount[player];
-    state->discardCount[player] = 0;//Reset discard
-
-    //Shufffle the deck
-    shuffle(player, state);//Shuffle the deck up and make it so that we can draw
-   
-    if (DEBUG){//Debug statements
-      printf("Deck count now: %d\n", state->deckCount[player]);
-    }
+        //Step 2 Draw Card
+        count = state->handCount[player];//Get current player's hand count
     
-    state->discardCount[player] = 0;
+        if (DEBUG){//Debug statements
+           printf("Current hand count: %d\n", count);
+        }
 
-    //Step 2 Draw Card
-    count = state->handCount[player];//Get current player's hand count
-    
-    if (DEBUG){//Debug statements
-      printf("Current hand count: %d\n", count);
-    }
-    
-    deckCounter = state->deckCount[player];//Create a holder for the deck count
+        deckCounter = state->deckCount[player];//Create a holder for the deck count
 
-    if (deckCounter == 0)
-      return -1;
+        if (deckCounter == 0)
+           return -1;
 
-    state->hand[player][count] = state->deck[player][deckCounter - 1];//Add card to hand
-    state->deckCount[player]--;
-    state->handCount[player]++;//Increment hand count
-  }
+        state->hand[player][count] = state->deck[player][deckCounter - 1];//Add card to hand
+        state->deckCount[player]--;
+        state->handCount[player]++;//Increment hand count
+     }
 
   else{
-    int count = state->handCount[player];//Get current hand count for player
-    int deckCounter;
-    if (DEBUG){//Debug statements
-      printf("Current hand count: %d\n", count);
-    }
 
-    deckCounter = state->deckCount[player];//Create holder for the deck count
-    state->hand[player][count] = state->deck[player][deckCounter - 1];//Add card to the hand
-    state->deckCount[player]--;
-    state->handCount[player]++;//Increment hand count
-  }
+        int count = state->handCount[player];//Get current hand count for player
+        int deckCounter;
+        if (DEBUG){//Debug statements
+           printf("Current hand count: %d\n", count);
+        }
+
+        deckCounter = state->deckCount[player];//Create holder for the deck count
+        state->hand[player][count] = state->deck[player][deckCounter - 1];//Add card to the hand
+        state->deckCount[player]--;
+        state->handCount[player]++;//Increment hand count
+      }
 
   return 0;
 }
@@ -1008,14 +1009,14 @@ int cardEffect(int card, int choice1, int choice2, int choice3, struct gameState
 
 int discardCard(int handPos, int currentPlayer, struct gameState *state, int trashFlag)
 {
-  //if card is not trashed, added to Played pile 
+  //if card is not trashed, added to Played pile
   if (trashFlag < 1)
     {
       //add card to played pile
       state->playedCards[state->playedCardCount] = state->hand[currentPlayer][handPos]; 
       state->playedCardCount++;
     }
-    
+
   //set played card to -1
   state->hand[currentPlayer][handPos] = -1;
 	
@@ -1182,7 +1183,7 @@ int callBaron(int choice1,struct gameState *state) {
 
 
 int callMinion(int choice1, int choice2, struct gameState *state, int handPos){
-
+    ///* choice1:  1 = +2 coin, 2 = redraw */
     //+1 action
     state->numActions++;
 
@@ -1192,7 +1193,7 @@ int callMinion(int choice1, int choice2, struct gameState *state, int handPos){
 
 
     // BUG, removed numPlayers -1 line which will result in out of range player
-    if (nextPlayer > (state->numPlayers )){
+    if (nextPlayer > (state->numPlayers -1)){
         nextPlayer = 0;
     }
 
@@ -1219,7 +1220,7 @@ int callMinion(int choice1, int choice2, struct gameState *state, int handPos){
         for (i = 0; i < state->numPlayers; i++) {
             if (i != currentPlayer) {
                 //BUG > 4 changed to >=
-                if ( state->handCount[i] >= 4 ) {
+                if ( state->handCount[i] > 4 ) {
                     //discard hand
                     while( state->handCount[i] > 0 ) {
                         discardCard(handPos, i, state, 0);
