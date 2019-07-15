@@ -1132,7 +1132,7 @@ int callBaron(int choice1,struct gameState *state) {
     if (choice1 > 0){//Boolean true or going to discard an estate
         int p = 0;//Iterator for hand!
         int card_not_discarded = 1;//Flag for discard set!
-        while(card_not_discarded || 1){
+        while(card_not_discarded){
             if (state->hand[currentPlayer][p] == estate){//Found an estate card!
                 state->coins += 4;//Add 4 coins to the amount of coins
                 state->discard[currentPlayer][state->discardCount[currentPlayer]] = state->hand[currentPlayer][p];
@@ -1145,11 +1145,13 @@ int callBaron(int choice1,struct gameState *state) {
                 card_not_discarded = 0;//Exit the loop
             }
             else if (p > state->handCount[currentPlayer]){
+
                 if(DEBUG) {
                     printf("No estate cards in your hand, invalid choice\n");
                     printf("Must gain an estate if there are any\n");
                 }
                 if (supplyCount(estate, state) > 0){
+
                     gainCard(estate, state, 0, currentPlayer);
                     //changed decrement to increment estates. -- to ++
                     state->supplyCount[estate]++;//Decrement estates
@@ -1444,5 +1446,10 @@ int callMine( int choice1, int choice2,  struct gameState *state, int handPos){
     return 0;
 }
 //end of dominion.c
+
+
+
+
+
 
 
