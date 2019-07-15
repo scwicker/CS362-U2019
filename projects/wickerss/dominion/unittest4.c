@@ -86,6 +86,64 @@ int main() {
 
 
 
+
+    //see if hand was discraded and re drawn
+
+    G.playedCardCount = 5;
+    G.whoseTurn = 1;
+    G.hand[1][0] = silver;
+    G.hand[1][1] = silver;
+    G.hand[1][2] = silver;
+    G.hand[1][3] = silver;
+    G.hand[1][4] = silver;
+
+    handpos = 1;
+    /* choice1:  1 = +2 coin, 2 = redraw */
+    callMinion(0, 1, &G, handpos);
+    for(i = 0; i < 5; i++) {
+
+        if (G.hand[1][i] != silver) {
+            printf("PASS: Card %d is no longer silver, therefore redrawn.\n", i);
+
+        } else {
+            printf("FAILED: Or possible redrew silver\n");
+        }
+    }
+
+
+    // test that player with less than four cards do not re draw
+
+    G.handCount[1] = 5;
+    G.whoseTurn = 1;
+    G.hand[1][0] = silver;
+    G.hand[1][1] = silver;
+    G.hand[1][2] = silver;
+    G.hand[1][3] = silver;
+    G.hand[1][4] = silver;
+
+
+    G.hand[0][0] = silver;
+    G.hand[0][1] = silver;
+    G.hand[0][2] = silver;
+    G.handCount[0] = 3;
+
+    handpos = 1;
+    /* choice1:  1 = +2 coin, 2 = redraw */
+    callMinion(0, 1, &G, handpos);
+    for(i = 0; i < 3; i++) {
+
+        if (G.hand[0][i] != silver) {
+            printf("FAIL: Card %d is no longer silver, therefore redrawn.\n", i);
+            break;
+
+        } else {
+            printf("PASS: Other play hand remaines unchanged.\n");
+        }
+    }
+
+
+
+
     return 0;
 }
 
