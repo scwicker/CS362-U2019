@@ -1208,6 +1208,7 @@ int callMinion(int choice1, int choice2, struct gameState *state, int handPos){
     }
     //discard hand, redraw 4, other players with 5+ cards discard hand and draw 4
     else if (choice2) {
+
         //discard hand
         while(numHandCards(state) > 0) {
             discardCard(handPos, currentPlayer, state, 0);
@@ -1221,6 +1222,7 @@ int callMinion(int choice1, int choice2, struct gameState *state, int handPos){
         //other players discard hand and redraw if hand size > 4
         for (i = 0; i < state->numPlayers; i++) {
             if (i != currentPlayer) {
+
                 //BUG > 4 changed to >=
                 if ( state->handCount[i] > 4 ) {
                     //discard hand
@@ -1238,7 +1240,7 @@ int callMinion(int choice1, int choice2, struct gameState *state, int handPos){
     }
     return 0;
 }
-
+/* choice1 = card your getting rid of, choice2 = number of that card to return to supply */
 int callAmbassador( int choice1, int choice2, struct gameState *state, int handPos){
 
     int i;
@@ -1254,12 +1256,12 @@ int callAmbassador( int choice1, int choice2, struct gameState *state, int handP
     j = 0;		//used to check if player has enough cards to discard
 
     // BUG SWAPPED <  > SIGNS, makes it always true
-    if (choice2 < 2 || choice2 > 0)
+    if (choice2 > 2 || choice2 < 0)
     {
         return -1;
     }
     //BUG == TO =  assigns instead of compares
-    if (choice1 = handPos)
+    if (choice1 == handPos)
     {
         return -1;
     }
