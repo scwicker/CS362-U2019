@@ -1326,11 +1326,16 @@ int callTribute(struct gameState *state){
     }
 
     if ((state->discardCount[nextPlayer] + state->deckCount[nextPlayer]) <= 1){
+        printf("insdie 1\n");
         if (state->deckCount[nextPlayer] > 0){
+            printf("insdie 2\n");
+
             tributeRevealedCards[0] = state->deck[nextPlayer][state->deckCount[nextPlayer]-1];
             state->deckCount[nextPlayer]--;
         }
         else if (state->discardCount[nextPlayer] > 0){
+            printf("insdie 3\n");
+
             tributeRevealedCards[0] = state->discard[nextPlayer][state->discardCount[nextPlayer]-1];
             state->discardCount[nextPlayer]--;
         }
@@ -1344,11 +1349,15 @@ int callTribute(struct gameState *state){
 
     else{
         if (state->deckCount[nextPlayer] == 0){
+            printf("insdie 4\n");
+
             for (i = 0; i < state->discardCount[nextPlayer]; i++){
+                printf("insdie 5\n");
+
                 state->deck[nextPlayer][i] = state->discard[nextPlayer][i];//Move to deck
                //BUG SWAPPED DISCARD/INCREMENT LINE. WILL DISCARD WRONG CARD
-                state->discard[nextPlayer][i] = -1;
                 state->deckCount[nextPlayer]++;
+                state->discard[nextPlayer][i] = -1;
                 state->discardCount[nextPlayer]--;
             }
 
@@ -1360,24 +1369,34 @@ int callTribute(struct gameState *state){
         tributeRevealedCards[1] = state->deck[nextPlayer][state->deckCount[nextPlayer]-1];
         state->deck[nextPlayer][state->deckCount[nextPlayer]--] = -1;
         state->deckCount[nextPlayer]--;
+        printf("insdie 6\n");
+
     }
 
     if (tributeRevealedCards[0] == tributeRevealedCards[1]){//If we have a duplicate card, just drop one
+        printf("insdie 7\n");
+
         state->playedCards[state->playedCardCount] = tributeRevealedCards[1];
         state->playedCardCount++;
         tributeRevealedCards[1] = -1;
     }
 
-    for (i = 0; i <= 2; i ++){
+    for (i = 0; i < 2; i ++){
+        printf("insdie 8\n");
+
         if (tributeRevealedCards[i] == copper || tributeRevealedCards[i] == silver || tributeRevealedCards[i] == gold){//Treasure cards
             state->coins += 2;
         }
           //  BUG, removed: tributeRevealedCards[i] == duchy ... always evaluated to TRUE
-        else if (tributeRevealedCards[i] == estate || duchy || tributeRevealedCards[i] == province || tributeRevealedCards[i] == gardens || tributeRevealedCards[i] == great_hall){//Victory Card Found
+        else if (tributeRevealedCards[i] == estate || tributeRevealedCards[i] == duchy || tributeRevealedCards[i] == province || tributeRevealedCards[i] == gardens || tributeRevealedCards[i] == great_hall){//Victory Card Found
+            printf("insdie 9\n");
+
             drawCard(currentPlayer, state);
             drawCard(currentPlayer, state);
         }
         else{//Action Card
+            printf("insdie 10\n");
+
             state->numActions = state->numActions + 2;
         }
     }

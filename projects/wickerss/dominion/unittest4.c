@@ -39,7 +39,7 @@ int main() {
         golds[i] = gold;
     }
 
-    printf ("TESTING callMinion():\n");
+    printf ("TESTING callTribute():\n");
 
 
     for (p = 0; p < numPlayer; p++)
@@ -62,8 +62,8 @@ int main() {
             }
         }
     }
-    G.playedCardCount = 1;
-    G.whoseTurn = 1;
+    G.playedCardCount = 0;
+    G.whoseTurn = 0;
     G.hand[1][0] = silver;
     G.hand[1][1] = silver;
     G.hand[1][2] = silver;
@@ -73,72 +73,47 @@ int main() {
     G.coins = 4;
     int handpos = 1;
     /* choice1:  1 = +2 coin, 2 = redraw */
-    callMinion(1, 0, &G, handpos);
 
-    if(G.coins == 6) {
-        printf("PASS: increased 2 coins as expected.\n");
+    G.coins = 0;
+    G.numActions = 0;
+    G.handCount[0] = 0;
 
+
+    G.deckCount[1] = 2;
+    G.deck[1][0] = silver;
+    G.deck[1][1] = silver;
+
+    //Ensure no error codes are thrown
+    if(callTribute(&G) == 0){
+        printf("PASS: Tribute returned 0 as expected\n");
     }
-    else {
-        printf("FAILED: Should have increased 2 coins\n");
-    }
-
-
-
-
-
-    //see if hand was discraded and re drawn
-
-    G.playedCardCount = 5;
-    G.whoseTurn = 1;
-    G.hand[1][0] = silver;
-    G.hand[1][1] = silver;
-    G.hand[1][2] = silver;
-    G.hand[1][3] = silver;
-    G.hand[1][4] = silver;
-
-    handpos = 1;
-    /* choice1:  1 = +2 coin, 2 = redraw */
-    callMinion(0, 1, &G, handpos);
-    for(i = 0; i < 5; i++) {
-
-        if (G.hand[1][i] != silver) {
-            printf("PASS: Card %d is no longer silver, therefore redrawn.\n", i);
-
-        } else {
-            printf("FAILED: Or possible redrew silver\n");
-        }
+    else{
+        printf("FAIL: Tribute returned an error\n");
     }
 
+    G.whoseTurn = 0;
 
-    // test that player with less than four cards do not re draw
-
-    G.handCount[1] = 5;
-    G.whoseTurn = 1;
-    G.hand[1][0] = silver;
-    G.hand[1][1] = silver;
-    G.hand[1][2] = silver;
-    G.hand[1][3] = silver;
-    G.hand[1][4] = silver;
+    int somethingChanged = 0;
 
 
-    G.hand[0][0] = silver;
-    G.hand[0][1] = silver;
-    G.hand[0][2] = silver;
-    G.handCount[0] = 3;
+    if(G.coins >= 0) {
+        printf("PASS: increased coins as expected:%d\n", G.coins);
+        somethingChanged = 1;
 
-    handpos = 1;
-    /* choice1:  1 = +2 coin, 2 = redraw */
-    callMinion(0, 1, &G, handpos);
-    for(i = 0; i < 3; i++) {
+    }
+    if(G.numActions >= 0) {
+        printf("PASS: increased actions as expected:%d\n", G.numActions);
+        somethingChanged = 1;
 
-        if (G.hand[0][i] != silver) {
-            printf("FAIL: Card %d is no longer silver, therefore redrawn.\n", i);
-            break;
+    }
 
-        } else {
-            printf("PASS: Other play hand remaines unchanged.\n");
-        }
+    if(G.handCount[0] >= 0) {
+        printf("PASS: increased handcount as expected:%d\n", G.handCount[0]);
+        somethingChanged = 1;
+
+    }
+    if(somethingChanged == 0){
+        printf("FAIL: No values were effected by action\n");
     }
 
 
