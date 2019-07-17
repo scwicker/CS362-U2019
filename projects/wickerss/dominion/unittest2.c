@@ -22,7 +22,7 @@ int main() {
     int seed = 1000;
     int numPlayer = 2;
     int maxBonus = 10;
-    int p, r, handCount;
+    int p, handCount;
     int bonus;
     int k[10] = {adventurer, council_room, feast, gardens, mine
             , remodel, smithy, village, baron, great_hall};
@@ -30,13 +30,11 @@ int main() {
     int maxHandCount = 5;
     // arrays of all coppers, silvers, and golds
     int coppers[MAX_HAND];
-    int silvers[MAX_HAND];
-    int golds[MAX_HAND];
+
     for (i = 0; i < MAX_HAND; i++)
     {
         coppers[i] = copper;
-        silvers[i] = silver;
-        golds[i] = gold;
+
     }
 
     printf ("TESTING callMinion():\n");
@@ -51,7 +49,7 @@ int main() {
 #if (NOISY_TEST == 1)
 #endif
                 memset(&G, 23, sizeof(struct gameState));   // clear the game state
-                r = initializeGame(numPlayer, k, seed, &G); // initialize a new game
+                initializeGame(numPlayer, k, seed, &G); // initialize a new game
                 G.handCount[p] = handCount;                 // set the number of cards on hand
                 memcpy(G.hand[p], coppers, sizeof(int) * handCount); // set all the cards to copper
                 updateCoins(p, &G, bonus);
@@ -202,7 +200,7 @@ int main() {
             break;
 
         } else {
-            printf("PASS: Other play hand remaines unchanged.\n");
+            printf("PASS: Other player hand remains unchanged.\n");
         }
     }
 
