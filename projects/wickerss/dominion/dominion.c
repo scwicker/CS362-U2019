@@ -483,9 +483,9 @@ int getWinners(int players[MAX_PLAYERS], struct gameState *state) {
   for (i = 0; i < MAX_PLAYERS; i++)
     {
       if (players[i] > players[j])
-	{
-	  j = i;
-	}
+	    {
+	     j = i;
+	    }
     }
   highScore = players[j];
 
@@ -494,35 +494,35 @@ int getWinners(int players[MAX_PLAYERS], struct gameState *state) {
   for (i = 0; i < MAX_PLAYERS; i++)
     {
       if ( players[i] == highScore && i > currentPlayer )
-	{
-	  players[i]++;
-	}
+        {
+          players[i]++;
+        }
     }
 
   //find new highest score
+    //duplicate code, could be it's own function..
   j = 0;
   for (i = 0; i < MAX_PLAYERS; i++)
     {
       if ( players[i] > players[j] )
-	{
-	  j = i;
-	}
+        {
+          j = i;
+        }
     }
   highScore = players[j];
-
-  //set winners in array to 1 and rest to 0
+  //set winner in array to 1 and rest to 0 -------- 3, 7, 5, 3
   for (i = 0; i < MAX_PLAYERS; i++)
     {
       if ( players[i] == highScore )
-	{
-	  players[i] = 1;
-	}
+	    {
+	      players[i] = 1;
+	    }
       else
-	{
-	  players[i] = 0;
-	}
+	    {
+	      players[i] = 0;
+	    }
     }
-
+    
   return 0;
 }
 
