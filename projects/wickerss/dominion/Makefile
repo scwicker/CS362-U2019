@@ -24,10 +24,7 @@ testAll: dominion.o testSuite.c
 interface.o: interface.h interface.c
 	gcc -c interface.c -g  $(CFLAGS)
 
-runtests: testDrawCard 
-	./testDrawCard &> unittestresult.out
-	gcov dominion.c >> unittestresult.out
-	cat dominion.c.gcov >> unittestresult.out
+
 
 testUpdateCoins: testUpdateCoins.c dominion.o rngs.o
 	gcc -o testUpdateCoins -g  testUpdateCoins.c dominion.o rngs.o $(CFLAGS)
@@ -64,6 +61,38 @@ testCardTest5: cardtest5.c dominion.o rngs.o
 
 player: player.c interface.o
 	gcc -o player player.c -g  dominion.o rngs.o interface.o $(CFLAGS)
+
+unittestresults: testUnitTest1 testUnitTest2 testUnitTest3 testUnitTest4 testUnitTest5 testCardTest1 testCardTest2 testCardTest3 testCardTest4 testCardTest5 
+	./unittest1 >> unittestresult.out
+	gcov unittest1.c >> unittestresult.out
+	cat unittest1.c.gcov >> unittestresult.out
+	./unittest2 >> unittestresult.out
+	gcov unittest2.c >> unittestresult.out
+	cat unittest2.c.gcov >> unittestresult.out
+	./unittest3 >> unittestresult.out
+	gcov unittest3.c >> unittestresult.out
+	cat unittest3.c.gcov >> unittestresult.out
+	./unittest4 >> unittestresult.out
+	gcov unittest4.c >> unittestresult.out
+	cat unittest4.c.gcov >> unittestresult.out
+	./unittest5 >> unittestresult.out
+	gcov unittest5.c >> unittestresult.out
+	cat unittest5.c.gcov >> unittestresult.out
+	./cardtest1 >> unittestresult.out
+	gcov cardtest1.c >> unittestresult.out
+	cat cardtest1.c.gcov >> unittestresult.out
+	./cardtest2 >> unittestresult.out
+	gcov cardtest2.c >> unittestresult.out
+	cat cardtest2.c.gcov >> unittestresult.out
+	./cardtest3 >> unittestresult.out
+	gcov cardtest3.c >> unittestresult.out
+	cat cardtest3.c.gcov >> unittestresult.out
+	./cardtest4 >> unittestresult.out
+	gcov cardtest4.c >> unittestresult.out
+	cat cardtest4.c.gcov >> unittestresult.out
+	./cardtest5 >> unittestresult.out
+	gcov cardtest5.c >> unittestresult.out
+	cat cardtest5.c.gcov >> unittestresult.out
 
 all: playdom player testUpdateCoins testUnitTest1 testUnitTest2 testUnitTest3 testUnitTest4 testUnitTest5 testCardTest1 testCardTest2 testCardTest3 testCardTest4 testCardTest5
 
