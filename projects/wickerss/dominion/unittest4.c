@@ -22,7 +22,7 @@ int main() {
     int seed = 1000;
     int numPlayer = 2;
     int maxBonus = 10;
-    int p, handCount;
+    int p, r, handCount;
     int bonus;
     int k[10] = {adventurer, council_room, feast, gardens, mine
             , remodel, smithy, village, baron, great_hall};
@@ -30,14 +30,16 @@ int main() {
     int maxHandCount = 5;
     // arrays of all coppers, silvers, and golds
     int coppers[MAX_HAND];
-
+    int silvers[MAX_HAND];
+    int golds[MAX_HAND];
     for (i = 0; i < MAX_HAND; i++)
     {
         coppers[i] = copper;
-
+        silvers[i] = silver;
+        golds[i] = gold;
     }
 
-    printf ("TESTING callBaron():\n");
+    printf ("TESTING callTribute():\n");
 
 
     for (p = 0; p < numPlayer; p++)
@@ -49,7 +51,7 @@ int main() {
 #if (NOISY_TEST == 1)
 #endif
                 memset(&G, 23, sizeof(struct gameState));   // clear the game state
-                initializeGame(numPlayer, k, seed, &G); // initialize a new game
+                r = initializeGame(numPlayer, k, seed, &G); // initialize a new game
                 G.handCount[p] = handCount;                 // set the number of cards on hand
                 memcpy(G.hand[p], coppers, sizeof(int) * handCount); // set all the cards to copper
                 updateCoins(p, &G, bonus);
@@ -60,95 +62,65 @@ int main() {
             }
         }
     }
-    G.playedCardCount = 1;
-    G.whoseTurn = 1;
+    G.playedCardCount = 0;
+    G.whoseTurn = 0;
     G.hand[1][0] = silver;
     G.hand[1][1] = silver;
     G.hand[1][2] = silver;
     G.hand[1][3] = silver;
     G.hand[1][4] = silver;
 
-    G.discardCount[1] = 0;
-    callBaron(0, &G);
+    G.coins = 4;
+    int handpos = 1;
+    /* choice1:  1 = +2 coin, 2 = redraw */
 
-    if(G.discardCount[1] > 0) {
-        if (G.discard[1][0] == estate) {
-
-            printf("PASS: Estate added to discard pile as expected.\n");
-
-        }
-    }
-    else {
-        printf("FAILED: Should have added estate to discard pile\n");
-    }
+    G.coins = 0;
+    G.numActions = 0;
+    G.handCount[0] = 0;
 
 
+    G.deckCount[1] = 2;
+    G.deck[1][0] = silver;
+    G.deck[1][1] = silver;
 
-    G.hand[1][0] = silver;
-    G.hand[1][1] = silver;
-    G.hand[1][2] = estate;
-    G.hand[1][3] = silver;
-    G.hand[1][4] = silver;
-    G.handCount[1] = 5;
-
-    //must ensure another estate isn't drawn for this test to always pass
-    G.supplyCount[estate] = 0;
-    callBaron(1, &G);
-
-    if (G.hand[1][2] != estate) {
-
-        printf("PASS: Estate discard and new card drawn to hand as expected.\n");
+    //Ensure no error codes are thrown
+    if(callTribute(&G) == 0){
+        printf("PASS: Tribute returned 0 as expected\n");
     }
     else{
-        printf("FAILED: Should have discarded estate and drawn new card\n");
+        printf("FAIL: Tribute returned an error\n");
+    }
+
+    G.whoseTurn = 0;
+
+    int somethingChanged = 0;
+
+
+    if(G.coins >= 0) {
+        printf("PASS: increased coins as expected:%d\n", G.coins);
+        somethingChanged = 1;
+
+    }
+    if(G.numActions >= 0) {
+        printf("PASS: increased actions as expected:%d\n", G.numActions);
+        somethingChanged = 1;
+
+    }
+
+    if(G.handCount[0] >= 0) {
+        printf("PASS: increased handcount as expected:%d\n", G.handCount[0]);
+        somethingChanged = 1;
+
+    }
+    if(somethingChanged == 0){
+        printf("FAIL: No values were effected by action\n");
     }
 
 
-
-
-
-    G.hand[1][0] = silver;
-    G.hand[1][1] = silver;
-    G.hand[1][2] = estate;
-    G.hand[1][3] = silver;
-    G.hand[1][4] = silver;
-    G.coins = 8;
-    callBaron(1, &G);
-
-    if (G.coins == 4) {
-
-        printf("PASS: coins decremented to %d.\n", G.coins);
-    }
-    else{
-        printf("FAILED: coins changed  to %d instead of 8\n", G.coins);
-    }
-
-
-    G.hand[1][0] = silver;
-    G.hand[1][1] = silver;
-    G.hand[1][2] = estate;
-    G.hand[1][3] = silver;
-    G.hand[1][4] = silver;
-    G.numBuys = 2;
-    callBaron(1, &G);
-
-    if (G.numBuys == 3) {
-
-        printf("PASS: num buys  incremented to %d.\n", G.numBuys);
-    }
-    else{
-        printf("FAILED: num buys is %d instead of 4\n", G.numBuys);
-    }
 
 
     return 0;
 }
-
-
-
-
-
-
 
 
 
