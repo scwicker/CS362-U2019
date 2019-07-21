@@ -4,14 +4,38 @@
 #include<time.h>
 char inputChar()
 {
-    // TODO: rewrite this function
-    return ' ';
+    int random_int, random_range, ascii_min, ascii_max;
+    ascii_min = 32;
+    ascii_max = 126; // don't need DEL or ~
+    // range of ascii characters that we want to generate
+    random_range = ascii_max - ascii_min;
+    // get a random int that will correspond to a char
+    random_int = (rand() % (random_range)) + ascii_min;
+    // cast random_int into a char
+    char random_char = (char) random_int;
+    
+    return random_char;
 }
+
+
 char *inputString()
 {
-    // TODO: rewrite this function
-    return "";
+    char random_string[6], *return_string;
+    char reasonable_letter_pool[10] = "restabcdef";
+    int i, random_position;
+    // grab 5 random letters from our letter pool
+    for(i = 0; i < 5; i++){
+         random_position = (rand() % (10));
+         random_string[i] = reasonable_letter_pool[random_position];
+    }
+    // append string with newline 
+    random_string[5] = '\0';
+    // return char* random string
+    return_string = random_string;
+return return_string;
 }
+
+
 void testme()
 {
   int tcCount = 0;
