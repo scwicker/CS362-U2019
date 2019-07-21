@@ -87,6 +87,7 @@ int main() {
     else{
         printf("FAIL: number of buys not reset during end turn.\n");
     }
+
     
     return 0;
 }
