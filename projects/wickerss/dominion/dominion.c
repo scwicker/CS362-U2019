@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
-
+//This version has bugs introduced from assignment 2
 int compare(const void* a, const void* b) {
   if (*(int*)a > *(int*)b)
     return 1;
