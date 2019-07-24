@@ -36,16 +36,12 @@ randomtestcard3: randomtestcard3.c dominion.o rngs.o
 player: player.c interface.o
 	gcc -o player player.c -g  dominion.o rngs.o interface.o $(CFLAGS)
 
-unittestresults: randomtestcard1 randomtestcard2 randomtestcard3
-	./randomtestcard1 >> unittestresult.out
-	gcov randomtestcard1.c >> unittestresult.out
-	cat randomtestcard1.c.gcov >> unittestresult.out
-	./randomtestcard2 >> unittestresult.out
-	gcov randomtestcard2.c >> unittestresult.out
-	cat randomtestcard2.c.gcov >> unittestresult.out
-	./randomtestcard3 >> unittestresult.out
-	gcov randomtestcard3.c >> unittestresult.out
-	cat randomtestcard3.c.gcov >> unittestresult.out
+randomtestresults: randomtestcard1 randomtestcard2 randomtestcard3
+	./randomtestcard1
+	./randomtestcard2
+	./randomtestcard3
+	gcov -fb dominion.c >> randomtestresults.out
+	cat dominion.c.gcov >> randomtestresults.out
 
 all: randomtestcard1 randomtestcard2 randomtestcard3
 
