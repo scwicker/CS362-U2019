@@ -127,9 +127,7 @@ int main() {
         printf("whoseturn: %d\n", whoseTurn);
         printf("hand: %d\n", hand);
         printf("choice: %d\n", choice);
-
-        callBaron(choice, &G);
-
+        
 
         if(callBaron(choice, &G) != 0){
             if (G.discard[1][0] == estate) {
