@@ -127,15 +127,15 @@ int main() {
         printf("whoseturn: %d\n", whoseTurn);
         printf("hand: %d\n", hand);
         printf("choice: %d\n", choice);
-        
+
 
         if(callBaron(choice, &G) != 0){
-            if (G.discard[1][0] == estate) {
 
-                printf("Failure: See last inputs to troubleshoot.\n");
-                break;
 
-            }
+            printf("Failure: See last inputs to troubleshoot.\n");
+            break;
+
+
         }
         else {
             printf("PASSED\n");

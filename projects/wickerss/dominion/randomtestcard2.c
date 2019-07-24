@@ -137,15 +137,12 @@ int main() {
         printf("hand: %d\n", hand);
         printf("choice1: %d\n", choice1);
         printf("choice2: %d\n", choice2);
-        
+
 
         if(callMinion(choice1, choice2, &G, handCounts) != 0){
-            if (G.discard[1][0] == estate) {
 
-                printf("Failure: See last inputs to troubleshoot.\n");
-                break;
-
-            }
+            printf("Failure: See last inputs to troubleshoot.\n");
+            break;
         }
         else {
             printf("PASSED\n");
@@ -153,10 +150,6 @@ int main() {
 
     }
 
-
-
-
-    ///////
 
     return 0;
 }
