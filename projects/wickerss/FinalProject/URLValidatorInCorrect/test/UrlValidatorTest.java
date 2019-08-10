@@ -83,6 +83,8 @@ protected void setUp() {
       UrlValidator urlVal = new UrlValidator(null, null, options);
       assertTrue(urlVal.isValid("http://www.google.com"));
       assertTrue(urlVal.isValid("http://www.google.com/"));
+      System.out.println("non-hex character ('Z') should fail");
+      assertFalse(urlVal.isValid("http://[ZADC:BA98:7654:3210:FEDC:BA98:7654:3210]:80/index.html"));
       int statusPerLine = 60;
       int printed = 0;
       if (printIndex)  {
