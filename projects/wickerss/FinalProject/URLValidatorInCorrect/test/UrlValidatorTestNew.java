@@ -105,6 +105,8 @@ public class UrlValidatorTestNew extends TestCase
                 testURL.append(port[portIndex].item);
                 testURL.append(path[pathIndex].item);
                 testURL.append(query[querIndex].item);
+                
+                System.out.printf("test URL: ", testURL);
 
                 boolean expected;
 
@@ -368,9 +370,8 @@ public class UrlValidatorTestNew extends TestCase
     };
     ResultPair [] query =
     {
+    	new ResultPair("?firstName=James&lastName=Smith", true),
         new ResultPair("", true)
-
-
     };
 
 
