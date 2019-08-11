@@ -314,7 +314,7 @@ public class UrlValidator implements Serializable {
         if ("file".equals(scheme)) {// Special case - file: allows an empty authority
             if (authority != null) {
                 if (authority.contains(":")) { // but cannot allow trailing :
-                    return false;
+                    return true;  //BUG should be false ***********************************************************************************
                 }
             }
             // drop through to continue validation
@@ -398,7 +398,7 @@ public class UrlValidator implements Serializable {
         if (ipv6 != null) {
             InetAddressValidator inetAddressValidator = InetAddressValidator.getInstance();
                 if (!inetAddressValidator.isValidInet6Address(ipv6)) {
-                    return true; // BUG, changed from false to true 
+                    return true; // BUG, changed from false to true  ***************************************************************************
                 }
         } else {
             String hostLocation = authorityMatcher.group(PARSE_AUTHORITY_HOST_IP);
