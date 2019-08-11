@@ -68,10 +68,11 @@ public class UrlValidatorTestNew extends TestCase
         int optiIndex = 0;
         int querIndex = 0;
         int allTested = 0;
+       
 
-        assertFalse(urlValid.isValid("ZAAA:AAAA:AAAA:AAAA:AAAA:AAAA:AAAA:AAAA")); //test to see if IPV6 address is false
+        assertFalse(urlValid.isValid("http://[AAAZ:AAAA:AAAA:AAAA:AAAA:AAAA:AAAA:AAAA]:80/index.html")); //test to see if IPV6 address is false
 
-        boolean testCheck = urlValid.isValid("ZAAA:AAAA:AAAA:AAAA:AAAA:AAAA:AAAA:AAAA");
+        boolean testCheck = urlValid.isValid("http://[AAAZ:AAAA:AAAA:AAAA:AAAA:AAAA:AAAA:AAAA]:80/index.html");
 
         if (testCheck == true)
         {
