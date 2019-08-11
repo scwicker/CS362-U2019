@@ -192,6 +192,39 @@ public class UrlValidatorTestNew extends TestCase {
 		}
 	}
 	
+
+//////////////////////////////////////////////////////////////Begin random test section //////////////
+public static int getRandomNumber(int min, int max){
+
+int x = (int)(Math.random()*((max-min)+1))+min;
+
+return x;
+
+}   
+
+
+public void randomTestPermutations(Object[] testObjects, Long options) {
+
+	System.out.println("This function calls isValid() with randomly combined segments of URLS.");
+	
+	UrlValidator urlValid = new UrlValidator(null, null, options);
+	assertTrue(urlValid.isValid("http://www.google.com")); //test to see if working
+	
+	//need size of each segment  list for getRandomNumber() upper param
+	int lowerLimit = 1;
+	int upperLimit = 5;  // Change this to = class.randomlist.length or whatever
+	
+	int r = getRandomNumber(lowerLimit,5);  // then change 5 to upperLimit
+	System.out.println(r);
+	
+	// then inside a for loop we'd need something like this maybe? For each of the segments..
+	// testURL.append(scheme[getRandomNumber(lowerLimit, scheme.length].item);
+	
+
+}
+
+///////////////////////////////////////////   End random test section ////////////////////
+
 	
 
 	
