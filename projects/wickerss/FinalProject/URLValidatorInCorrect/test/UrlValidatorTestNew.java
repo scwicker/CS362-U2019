@@ -304,22 +304,24 @@ public class UrlValidatorTestNew extends TestCase
     public void randomTestPermutations(Object[] testObjects, Long options)
     {
 
-        System.out.println("This function calls isValid() with randomly combined segments of URLS.");
+        System.out.println("\nThis function calls isValid() with randomly combined segments of URLS.");
 
         UrlValidator urlValid = new UrlValidator(null, null, options);
+        StringBuilder testURL = new StringBuilder(); // url string to test.
         assertTrue(urlValid.isValid("http://www.google.com")); //test to see if working
 
         //need size of each segment  list for getRandomNumber() upper param
-        int lowerLimit = 1;
+        int lowerLimit = 0;
         int upperLimit = 5;  // Change this to = class.randomlist.length or whatever
 
-        int r = getRandomNumber(lowerLimit, 5); // then change 5 to upperLimit
-        System.out.println(r);
-
         // then inside a for loop we'd need something like this maybe? For each of the segments..
-        // testURL.append(scheme[getRandomNumber(lowerLimit, scheme.length].item);
-
-
+        //testURL.append(scheme[getRandomNumber(lowerLimit, scheme.length].item);
+        for(int i = 0; i < testObjects.length; i++) {
+            ResultPair[] result = (ResultPair[]) testObjects[i];
+            int randomNumber = getRandomNumber(lowerLimit, result.length - 1);
+            testURL.append(result[randomNumber].item);
+        }
+        //System.out.print(testURL);
     }
 
     ///////////////////////////////////////////   End random test section ////////////////////
@@ -336,8 +338,8 @@ public class UrlValidatorTestNew extends TestCase
 
     ResultPair [] scheme =
     {
-        new ResultPair("http://", true)
-
+        new ResultPair("http://", true),
+        new ResultPair("https://", true)
     };
     ResultPair [] authority =
     {
@@ -348,16 +350,14 @@ public class UrlValidatorTestNew extends TestCase
     };
     ResultPair [] port =
     {
-        new ResultPair("", true)
-
+        new ResultPair("", true),
+        new ResultPair(":80", true)
 
     };
     ResultPair [] path =
     {
         new ResultPair("", true),
         new ResultPair("/test1/", true)
-
-
     };
     ResultPair [] options =
     {
@@ -365,8 +365,6 @@ public class UrlValidatorTestNew extends TestCase
         new ResultPair("/t123/file", true),
         new ResultPair("/$23/file", true),
         new ResultPair("/../file", false)
-
-
     };
     ResultPair [] query =
     {
