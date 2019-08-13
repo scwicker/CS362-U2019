@@ -75,6 +75,11 @@ import java.util.regex.Pattern;
  */
 public class UrlValidator implements Serializable {
 
+
+    private final boolean bug = false;
+
+
+
     private static final long serialVersionUID = 7557161713937335013L;
 
     private static final int MAX_UNSIGNED_16_BIT_INT = 0xFFFF; // port max
@@ -314,7 +319,14 @@ public class UrlValidator implements Serializable {
         if ("file".equals(scheme)) {// Special case - file: allows an empty authority
             if (authority != null) {
                 if (authority.contains(":")) { // but cannot allow trailing :
-                    return true;  //BUG should be false ***********************************************************************************
+                    if (bug)
+                    {
+                        return true; // BUG, changed from false to true  ***************************************************************************
+                    }
+                    else
+                    {
+                        return false;
+                    }
                 }
             }
             // drop through to continue validation
@@ -398,7 +410,14 @@ public class UrlValidator implements Serializable {
         if (ipv6 != null) {
             InetAddressValidator inetAddressValidator = InetAddressValidator.getInstance();
                 if (!inetAddressValidator.isValidInet6Address(ipv6)) {
-                    return true; // BUG, changed from false to true  ***************************************************************************
+                    if (bug)
+                    {
+                        return true; // BUG, changed from false to true  ***************************************************************************
+                    }
+                    else
+                    {
+                        return false;
+                    }
                 }
         } else {
             String hostLocation = authorityMatcher.group(PARSE_AUTHORITY_HOST_IP);

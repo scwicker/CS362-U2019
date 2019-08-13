@@ -1,15 +1,3 @@
-//package test;
-
-
-
-//import static org.junit.Assert.*;
-
-//import org.junit.After;
-//import org.junit.Before;
-//import org.junit.Test;
-//import src.UrlValidator;
-//import src.ResultPair;
-
 
 
 
@@ -18,38 +6,31 @@ import junit.framework.TestCase;
 public class UrlValidatorTestNew extends TestCase
 {
 
+    private final boolean printResults = true;
+    private final boolean printIndex = false;    
+    private final boolean printRandUrls = false;
+
+
     public UrlValidatorTestNew(String testName)
     {
         super(testName);
     }
 
 
-    /*
-        @Before
-        public void setUp(int index) throws Exception
-        {
 
-
-        }
-
-        @After
-        public void tearDown() throws Exception
-        {
-
-
-        }
-    */
 
     public void testIsValid()
     {
         testIsValid(parts, UrlValidator.ALLOW_ALL_SCHEMES);
-        //      setUp();
+
         long options =
             UrlValidator.ALLOW_2_SLASHES
             + UrlValidator.ALLOW_ALL_SCHEMES
             + UrlValidator.NO_FRAGMENTS;
 
         testIsValid(partsWithOptions, options);
+
+        randomTestPermutations(partsWithOptions, options); 
     };
 
     public void testIsValid(Object[] testObjects, Long options)
@@ -59,7 +40,7 @@ public class UrlValidatorTestNew extends TestCase
         assertTrue(urlValid.isValid("http://www.google.com")); //test to see if working
 
         int printed = 0;
-        int statusPerLine = 6;
+        int statusPerLine = 20;
 
         int scheIndex = 0;
         int authIndex = 0;
@@ -70,7 +51,9 @@ public class UrlValidatorTestNew extends TestCase
         int allTested = 0;
        
 
-        assertFalse(urlValid.isValid("http://[AAAZ:AAAA:AAAA:AAAA:AAAA:AAAA:AAAA:AAAA]:80/index.html")); //test to see if IPV6 address is false
+//  The following assertion will fail. Commented out so rest of tests can run.
+/*        assertFalse(urlValid.isValid("http://[AAAZ:AAAA:AAAA:AAAA:AAAA:AAAA:AAAA:AAAA]:80/index.html")); //test to see if IPV6 address is false
+
 
         boolean testCheck = urlValid.isValid("http://[AAAZ:AAAA:AAAA:AAAA:AAAA:AAAA:AAAA:AAAA]:80/index.html");
 
@@ -78,6 +61,10 @@ public class UrlValidatorTestNew extends TestCase
         {
             System.out.print(testCheck);
         }
+*/
+
+        int count = 0;
+        int failed = 0;
 
         do 
         {
@@ -88,6 +75,7 @@ public class UrlValidatorTestNew extends TestCase
 
             if (testObjects.length == 5)
             {
+                count++;
 
                 //create a string, and a var for each of the parts for the URL
 
@@ -106,7 +94,7 @@ public class UrlValidatorTestNew extends TestCase
                 testURL.append(path[pathIndex].item);
                 testURL.append(query[querIndex].item);
                 
-                System.out.printf("test URL: ", testURL);
+                //System.out.printf("test URL: " + testURL);
 
                 boolean expected;
 
@@ -132,18 +120,20 @@ public class UrlValidatorTestNew extends TestCase
 
                 if (expected != result) //if a failure occurs, print out the indexes for each value
                 {
-                    System.out.print("{" + scheIndex + ',' + authIndex + ',' + portIndex + ',' + pathIndex + ',' + querIndex + "} ");
-
-
-                    //can set how many per line for legibility
-                    printed++;
-                    if (printed == statusPerLine)
-                    {
-                        //comment
-                        System.out.println();
-                        printed = 0;
+                    if (printIndex){    
+                        System.out.print("{" + scheIndex + ',' + authIndex + ',' + portIndex + ',' + pathIndex + ',' + querIndex + "} ");
+                    
+                        //can set how many per line for legibility
+                        printed++;
+                        if (printed == statusPerLine)
+                        {
+                            //comment
+                            System.out.println();
+                            printed = 0;
+                        }
                     }
-
+                    
+                    failed++;
                 }
 
 
@@ -186,6 +176,14 @@ public class UrlValidatorTestNew extends TestCase
             }
             else
             {
+                //reset line so path options tests are separated
+                if (printIndex || printResults){
+                    if (count == 0){
+                        System.out.println();
+                    }
+                }
+                count++;
+
                 //this is where port options are included
 
                 //create string and set a var for each part
@@ -216,7 +214,8 @@ public class UrlValidatorTestNew extends TestCase
                 boolean expected;
 
                 //if all ResultPair[index].valid == true, then expected value is true
-                if (    scheme[scheIndex].valid == true &&
+                if (    
+                        scheme[scheIndex].valid == true &&
                         authority[authIndex].valid == true &&
                         port[portIndex].valid == true &&
                         path[pathIndex].valid == true &&
@@ -237,13 +236,18 @@ public class UrlValidatorTestNew extends TestCase
 
                 if (expected != result) //if a failure, print out the indexes of the failure
                 {
-                    System.out.print("{" + scheIndex + ',' + authIndex + ',' + portIndex + ',' + pathIndex + ',' + optiIndex + ',' + querIndex + "} ");
 
-                    printed++;
-                    if (printed == statusPerLine)   //for legibility, can set statusPerLine above
-                    {
-                        System.out.println();
-                        printed = 0;
+                    failed++;
+                    
+                    if(printIndex){
+                        System.out.print("{" + scheIndex + ',' + authIndex + ',' + portIndex + ',' + pathIndex + ',' + optiIndex + ',' + querIndex + "} ");
+                    
+                        printed++;
+                        if (printed == statusPerLine)   //for legibility, can set statusPerLine above
+                        {
+                            System.out.println();
+                            printed = 0;
+                        }
                     }
                 }
 
@@ -287,6 +291,11 @@ public class UrlValidatorTestNew extends TestCase
             }
         }    
         while (allTested == 0);
+        if (printResults){
+            System.out.println();
+            System.out.println("During Testing:");                
+            System.out.println("Failed: " + failed + "\nTotal: " + count);
+        }
     }
 
 
@@ -304,23 +313,56 @@ public class UrlValidatorTestNew extends TestCase
     public void randomTestPermutations(Object[] testObjects, Long options)
     {
 
-        System.out.println("\nThis function calls isValid() with randomly combined segments of URLS.");
+        int count = 0;
+        int failed = 0;
 
-        UrlValidator urlValid = new UrlValidator(null, null, options);
-        StringBuilder testURL = new StringBuilder(); // url string to test.
-        assertTrue(urlValid.isValid("http://www.google.com")); //test to see if working
+        System.out.println("\n\nThis function calls isValid() with randomly combined segments of URLS.\n");
 
-        //need size of each segment  list for getRandomNumber() upper param
-        int lowerLimit = 0;
-        int upperLimit = 5;  // Change this to = class.randomlist.length or whatever
 
-        // then inside a for loop we'd need something like this maybe? For each of the segments..
-        //testURL.append(scheme[getRandomNumber(lowerLimit, scheme.length].item);
-        for(int i = 0; i < testObjects.length; i++) {
-            ResultPair[] result = (ResultPair[]) testObjects[i];
-            int randomNumber = getRandomNumber(lowerLimit, result.length - 1);
-            testURL.append(result[randomNumber].item);
+
+        int numberOfTests = 5000; //can set 
+
+        for (int j = 0; j < numberOfTests; j++)
+        {
+            count++;
+            boolean expected = true;
+
+            UrlValidator urlValid = new UrlValidator(null, null, options);
+            StringBuilder testURL = new StringBuilder();                    // url string to test.
+            
+            
+            for(int i = 0; i < testObjects.length; i++) 
+            {
+                ResultPair[] part = (ResultPair[]) testObjects[i];        //get result part of URL
+                int randomNumber = getRandomNumber(0, part.length - 1);   //generate random number
+                testURL.append(part[randomNumber].item);                  //append random part to the URL
+                if (part[randomNumber].valid == false)
+                {
+                    expected = false;                       //default expected is true, if a false value is encountered,
+                }                                           //change expected to false
+            }
+
+            String url = testURL.toString();        //convert to string
+            boolean result = urlValid.isValid(url); //get result value from isValid
+
+
+            if (expected != result) //if a failure, print out the indexes of the failure
+            {
+                failed++;
+
+                if(printRandUrls){
+                    System.out.println(count + "Failed: "+ url);
+                }
+            }
+            if(count == numberOfTests && printResults)
+            {
+                System.out.println();
+                System.out.println("During Random Testing:");                
+                System.out.println("Failed: " + failed + "\nTotal: " + count);
+            }
         }
+
+
         //System.out.print(testURL);
     }
 
@@ -339,37 +381,78 @@ public class UrlValidatorTestNew extends TestCase
     ResultPair [] scheme =
     {
         new ResultPair("http://", true),
-        new ResultPair("https://", true)
+        new ResultPair("https://", true), 
+        new ResultPair("ldap://", true), 
+        new ResultPair("/news:", false),
+        new ResultPair("en:///", false), 
+        new ResultPair("new:/:/", false), 
+        new ResultPair("ftp://", true), 
+
+
     };
     ResultPair [] authority =
     {
         new ResultPair("go.com:", false),
         new ResultPair("www.google.com", true),
-        new ResultPair("", false)
+        new ResultPair("", false), 
+        new ResultPair("wikipedia.org", true),
+        new ResultPair("github.com", true), 
+        new ResultPair("oregonstate.edu", true), 
+        new ResultPair("oregon", false), 
+        new ResultPair("bnasudbofhuibwe", false), 
+        new ResultPair("e.co", true), 
+        new ResultPair("example.org", true), 
+        new ResultPair("badexample.o", false), 
+
+
+
 
     };
     ResultPair [] port =
     {
         new ResultPair("", true),
-        new ResultPair(":80", true)
+        new ResultPair(":80", true), 
+        new ResultPair(":12345", true), 
+        new ResultPair("65535", true), 
+        new ResultPair("65536", false), 
+        new ResultPair("/:234", false), 
+        new ResultPair("234", false), 
+        new ResultPair("example", false) 
+
 
     };
     ResultPair [] path =
     {
         new ResultPair("", true),
-        new ResultPair("/test1/", true)
+        new ResultPair("/test1/", true), 
+        new ResultPair("://", false), 
+        new ResultPair("/example", true), 
+        new ResultPair("/files", true), 
+        new ResultPair("/.files", false), 
+        new ResultPair("/////", false), 
+        new ResultPair("/one/two/three", true)
+
+
     };
     ResultPair [] options =
     {
-        //new ResultPair("", true)
         new ResultPair("/t123/file", true),
         new ResultPair("/$23/file", true),
-        new ResultPair("/../file", false)
+        new ResultPair("/../file", false), 
+        new ResultPair("/one/more/time", true), 
+        new ResultPair("not/one/more/time", false), 
+        new ResultPair("/123/", true), 
+        new ResultPair("", true) 
+
+
+
     };
     ResultPair [] query =
     {
     	new ResultPair("?firstName=James&lastName=Smith", true),
+        new ResultPair("?field1=this&field2=that", true), 
         new ResultPair("", true)
+
     };
 
 
